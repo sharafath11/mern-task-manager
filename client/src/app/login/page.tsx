@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { showErrorToast, showInfoToast, showSuccessToast } from "@/utils/toast";
@@ -8,13 +7,19 @@ import { authService } from "@/services/authService";
 import { useRouter } from "next/navigation";
 import LoginButton from "./components/LoginButton";
 import { validateEmail } from "@/validation/emailValidation";
+import { useUser } from "@/context/UserContext";
 
 const LoginPage = () => {
   const router = useRouter();
-
+ const { user ,setUser} = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+useEffect(() => {
+  if (!user) {
+    router.push("/login");
+  }
+}, [user]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,14 +30,15 @@ const LoginPage = () => {
     setIsLoading(true);
 
     const res = await authService.login(email, password);
-
     if (!res?.ok) {
       setIsLoading(false);
       return showErrorToast(res?.msg);
     }
 
     showSuccessToast(res.msg);
-    window.location.href="/";
+    setUser(res.data)
+    router.push("/");
+    
     setIsLoading(false);
   };
 

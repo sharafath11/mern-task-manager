@@ -9,12 +9,21 @@ import { showErrorToast, showSuccessToast } from "@/utils/toast";
 import { ITask } from "@/types/taskType";
 import { confirmAction } from "@/utils/confirm";
 import { validateTaskForm } from "@/validation/taskValidation";
+import { useUser } from "@/context/UserContext";
+import { useRouter } from "next/navigation";
 
 
 
 const TasksPage = () => {
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [loading, setLoading] = useState(true);
+  const router=useRouter()
+  const { user } = useUser()
+ useEffect(() => {
+  if (!user) {
+    router.push("/login");
+  }
+}, [user]);
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -39,12 +48,11 @@ const TasksPage = () => {
   }, []);
     const handleAddTask = async (formData: FormData) => {
         const error = validateTaskForm(formData);
-        console.log("err",error)
       if (error) return showErrorToast(error);
       const ok = await confirmAction(
-    "Create Task are you sure complete this task ?",
-    "Are you sure you want to add this task?"
-      );
+         "Create Task?",
+         "Are you sure you want to add this task?"
+       );
          if (!ok) return;
     const res = await taskService.createTask(formData);
    
@@ -58,9 +66,9 @@ const TasksPage = () => {
           const error = validateTaskForm(formData);
   if (error) return showErrorToast(error);
         const ok = await confirmAction(
-    "Update Task?",
-    "Do you want to save these changes?"
-        );
+         "Update Task?",
+         "Do you want to save these changes?"
+         );
          if (!ok) return;
     const res = await taskService.updateTask(id, formData);
 
