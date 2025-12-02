@@ -16,10 +16,11 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 useEffect(() => {
-  if (!user) {
-    router.push("/login");
+  if (user) {
+    router.replace("/");
   }
 }, [user]);
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
