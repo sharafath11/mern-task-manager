@@ -186,13 +186,6 @@ The API endpoints are prefixed with `/api`.
 *   **`GET /auth/refresh-token`**: Refreshes the authentication token.
 
 
-## 📸 Screenshots
-
-Please create a `screenshots` directory in the root of the project and add your application screenshots there.
-
-![Dashboard Screenshot](./screenshots/dashboard.png)
-![Login Screenshot](./screenshots/login.png)
-![Task Creation Modal Screenshot](./screenshots/create-task-modal.png)
 
 ## 🤝 Contributing
 
@@ -204,6 +197,4 @@ Contributions are welcome! Please follow these steps:
 5.  Push to the branch (`git push origin feature/your-feature-name`).
 6.  Open a Pull Request.
 
-## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
