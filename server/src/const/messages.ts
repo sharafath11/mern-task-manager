@@ -72,6 +72,7 @@ export const MESSAGES = {
   CREATED: "Task created successfully.",
   UPDATED: "Task updated successfully.",
   DELETED: "Task deleted successfully.",
-  INVALID_ID: "Invalid task ID.",
+    INVALID_ID: "Invalid task ID.",
+  DUP:"Task with this title already exists for this user."
 },
 };

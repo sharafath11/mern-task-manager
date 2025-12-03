@@ -12,12 +12,13 @@ import { MESSAGES } from "../const/messages";
 import { decodeToken } from "../utils/jwtToken";
 import { ITaskController } from "../core/interfaces/controllers/ ITask.Controller";
 import { ITaskService } from "../core/interfaces/services/ ITask.Service";
+import { parseSort, parseStatus } from "../utils/parseQuery";
 
 @injectable()
 export class TaskController implements ITaskController {
   constructor(
     @inject(TYPES.ITaskService)
-    private readonly taskService: ITaskService
+    private _taskService: ITaskService
   ) {}
 
   private getUserId(req: Request): string {
@@ -30,18 +31,25 @@ export class TaskController implements ITaskController {
 
     return decoded.id;
   }
-
   async getAllTasks(req: Request, res: Response): Promise<void> {
-    try {
-      const userId = this.getUserId(req);
+  try {
+    const userId = this.getUserId(req);
 
-      const tasks = await this.taskService.getAllTasks(userId);
+    const result = await this._taskService.getAllTasks(userId, {
+      search: (req.query.search as string) || "",
+      status: parseStatus(req.query.status),
+      sort: parseSort(req.query.sort),
+      page: req.query.page ? parseInt(req.query.page as string, 10) : 1,
+      limit: req.query.limit ? parseInt(req.query.limit as string, 10) : 5,
+    });
 
-      sendResponse(res, StatusCode.OK, MESSAGES.COMMON.SUCCESS, true, tasks);
-    } catch (error) {
-      handleControllerError(res, error);
-    }
+    sendResponse(res, StatusCode.OK, MESSAGES.COMMON.SUCCESS, true, result);
+
+  } catch (error) {
+    handleControllerError(res, error);
   }
+}
+
 
   async createTask(req: Request, res: Response): Promise<void> {
     try {
@@ -51,7 +59,7 @@ export class TaskController implements ITaskController {
 
       const filePath = req.file ? `/uploads/${req.file.filename}` : undefined;
 
-      const newTask = await this.taskService.createTask(
+      const newTask = await this._taskService.createTask(
         userId,
         req.body,
         filePath
@@ -72,7 +80,7 @@ export class TaskController implements ITaskController {
 
       const filePath = req.file ? `/uploads/${req.file.filename}` : undefined;
 
-      const updatedTask = await this.taskService.updateTask(
+      const updatedTask = await this._taskService.updateTask(
         req.params.id,
         userId,
         req.body,
@@ -91,7 +99,7 @@ export class TaskController implements ITaskController {
       if (!req.params.id)
         throwError(MESSAGES.TASK.INVALID_ID, StatusCode.BAD_REQUEST);
 
-      await this.taskService.deleteTask(req.params.id, userId);
+      await this._taskService.deleteTask(req.params.id, userId);
 
       sendResponse(res, StatusCode.OK, MESSAGES.TASK.DELETED, true);
     } catch (error) {

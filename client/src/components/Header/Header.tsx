@@ -1,31 +1,34 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
+import { authService } from "@/services/authService";
+import { showInfoToast } from "@/utils/toast";
 
-interface HeaderProps {
-  isAuthenticated: boolean;
-  userName?: string;
-  onLogout: () => void;
-}
-
-const Header: React.FC<HeaderProps> = ({ isAuthenticated, userName, onLogout }) => {
+const Header = () => {
   const router = useRouter();
-  if(!isAuthenticated )router.push("/login")
+  const { user, setUser } = useUser()
+  const handleLogout = async () => {
+    const res = await authService.logout() 
+    if(!res?.ok) return showInfoToast(res?.msg)
+    setUser(null); 
+    router.push("/login");
+  };
+
   return (
     <header className="w-full bg-white border-b border-gray-200 shadow-sm py-4 px-6 flex items-center justify-between">
       
-      {/* Brand / Logo */}
       <Link href="/" className="text-2xl font-bold text-blue-600 hover:text-blue-700">
         TaskManager
       </Link>
 
       {/* Right section */}
       <div>
-        {!isAuthenticated ? (
-          /* Guest Mode */
+        {!user ? (
+          // Guest Mode
           <div className="flex gap-3">
             <Button
               variant="outline"
@@ -43,13 +46,13 @@ const Header: React.FC<HeaderProps> = ({ isAuthenticated, userName, onLogout }) 
             </Button>
           </div>
         ) : (
-          /* Authenticated Mode */
+          // Authenticated Mode
           <div className="flex items-center gap-4">
-            <span className="text-gray-700 font-medium">{userName}</span>
+            <span className="text-gray-700 font-medium">{user?.name}</span>
 
             <Button
               className="rounded-xl bg-red-600 hover:bg-red-700"
-              onClick={onLogout}
+              onClick={handleLogout}
             >
               Logout
             </Button>
