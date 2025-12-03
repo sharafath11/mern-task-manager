@@ -18,9 +18,9 @@ export default function Home() {
       </p>
       <Button
         className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl"
-        onClick={() => router.push("/tasks")}
+        onClick={user?() => router.push("/tasks"):() => router.push("/login")}
       >
-        Go to My Tasks
+        {user?"Go to My Tasks":"Login"}
       </Button>
     </div>
   );

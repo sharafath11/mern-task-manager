@@ -1,3 +1,4 @@
+import { ITaskQueryParams } from "./taskQuery";
 import { ITask } from "./taskType";
 import { IUser } from "./userTypes";
 
@@ -33,4 +34,18 @@ export interface IHeaderProps {
 export interface IUserContextType {
   user: IUser | null;
   setUser: (user: IUser | null) => void;
+}
+export interface ITaskFiltersProps {
+  search: string;
+  onSearch: (value: string) => void;
+
+  status: ITaskQueryParams["status"];
+  onStatus: (value: ITaskQueryParams["status"]) => void;
+
+  sortBy: ITaskQueryParams["sort"];
+  onSort: (value: ITaskQueryParams["sort"]) => void;
+
+  page: number;
+  totalPages: number;
+  onPageChange: (value: number) => void;
 }

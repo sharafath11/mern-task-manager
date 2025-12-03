@@ -11,7 +11,7 @@ import {
   throwError,
 } from "../utils/response";
 import { validateBodyFields } from "../utils/validateRequest";
-import { decodeToken, refreshAccessToken, setTokensInCookies } from "../utils/jwtToken";
+import { clearTokens, decodeToken, refreshAccessToken, setTokensInCookies } from "../utils/jwtToken";
 
 @injectable()
 export class AuthController implements IAuthController {
@@ -33,7 +33,9 @@ export class AuthController implements IAuthController {
         StatusCode.OK,
         MESSAGES.AUTH.LOGIN_SUCCESS,
         true,
-        result
+        { userId:result.userId,
+ name:result.name,
+ email:result.email}
       );
     } catch (error) {
       handleControllerError(res, error);
@@ -85,4 +87,18 @@ export class AuthController implements IAuthController {
       
     }
   }
+  async logout(req: Request, res: Response): Promise<void> {
+  try {
+    clearTokens(res); 
+    sendResponse(
+      res,
+      StatusCode.OK,
+      MESSAGES.AUTH.LOGOUT_SUCCESS,
+      true
+    );
+  } catch (error) {
+    handleControllerError(res, error);
+  }
+}
+
 }

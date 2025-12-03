@@ -10,6 +10,7 @@ const authController = container.resolve<IAuthController>(TYPES.IAuthController)
 
 router.post("/login", authController.login.bind(authController));
 router.post("/register", authController.signup.bind(authController));
+router.post("/logout",authController.logout.bind(authController))
 router.get("/user",authenticateToken,authController.getUser.bind(authController))
 router.get("/refresh-token",authController.refeshToken.bind(authController))
 export default router;
